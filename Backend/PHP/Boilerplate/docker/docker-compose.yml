@@ -1,0 +1,15 @@
+services:
+  php:
+    container_name: backend-php
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.php
+    expose:
+      - 9000
+    working_dir: /var/www/backend
+    volumes:
+      - ..:/var/www/backend
+    environment:
+      - COMPOSER_CACHE_DIR=/tmp/
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t

@@ -7,11 +7,13 @@ build-full: ## Build Docker containers (without cache)
 	$(DOCKER_COMPOSE) build --pull --no-cache
 
 up: ## Start Docker containers
-	$(DOCKER_COMPOSE) --compatibility up -d
+	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) run waiter
 
 up-full: ## First launch: start containers + install dependencies
-	$(DOCKER_COMPOSE) --compatibility up -d --force-recreate
+	$(DOCKER_COMPOSE) up -d --force-recreate
 	$(DOCKER_COMPOSE) exec -T php composer install
+	$(DOCKER_COMPOSE) run waiter
 
 down: ## Stop Docker containers
 	$(DOCKER_COMPOSE) down

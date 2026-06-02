@@ -1,0 +1,36 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Fulll\App\Parking\Command\CreateUserFleetCommand;
+use Fulll\App\Parking\Command\LocalizeVehicleCommand;
+use Fulll\App\Parking\Command\RegisterVehicleCommand;
+use Fulll\App\Parking\CommandHandler\CreateUserFleetCommandHandler;
+use Fulll\App\Parking\CommandHandler\LocalizeVehicleCommandHandler;
+use Fulll\App\Parking\CommandHandler\RegisterVehicleCommandHandler;
+use Fulll\App\Parking\Console\CreateUserFleetConsoleCommand;
+use Fulll\App\Parking\Console\LocalizeVehicleConsoleCommand;
+use Fulll\App\Parking\Console\RegisterVehicleConsoleCommand;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Messenger\Handler\HandlersLocator;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
+
+$application = new Application();
+
+$bus = new MessageBus([
+    new HandleMessageMiddleware(
+        new HandlersLocator([
+            CreateUserFleetCommand::class => [new CreateUserFleetCommandHandler()],
+            RegisterVehicleCommand::class => [new RegisterVehicleCommandHandler()],
+            LocalizeVehicleCommand::class => [new LocalizeVehicleCommandHandler()],
+        ])
+    ),
+]);
+
+$application->addCommand(new CreateUserFleetConsoleCommand($bus));
+$application->addCommand(new RegisterVehicleConsoleCommand($bus));
+$application->addCommand(new LocalizeVehicleConsoleCommand($bus));
+
+$application->run();

@@ -1,3 +1,4 @@
+name: fulll
 services:
   php:
     container_name: backend-php
@@ -7,9 +8,41 @@ services:
     expose:
       - 9000
     working_dir: /var/www/backend
+    links:
+      - db
     volumes:
       - ..:/var/www/backend
     environment:
       - COMPOSER_CACHE_DIR=/tmp/
+      - DB_HOST=db:3306
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_DATABASE=parking
     stdin_open: true # docker run -i
     tty: true        # docker run -t
+
+  db:
+    image: mysql:8.0
+    container_name: backend-db
+    command: --sql-mode=NO_ENGINE_SUBSTITUTION --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=parking
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+
+  waiter:
+    container_name: waiter
+    build:
+      context: .
+      dockerfile: DockerfileWait
+    depends_on:
+      - db
+    command: sh -c "/wait && echo 'hello world'"
+    environment:
+      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=5
+      - WAIT_HOST_CONNECT_TIMEOUT=30

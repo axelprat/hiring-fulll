@@ -7,6 +7,7 @@ readonly class Location
     public function __construct(
         public string $longitude,
         public string $latitude,
+        public int $altitude = 0,
     ) {
     }
 }

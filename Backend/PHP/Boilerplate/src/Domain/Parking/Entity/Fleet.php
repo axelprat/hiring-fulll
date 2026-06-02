@@ -14,8 +14,10 @@ class Fleet
 
     public function __construct(
         public readonly FleetId $id,
-        public readonly User $owner
+        public readonly User $owner,
+        Vehicle ...$vehicles
     ) {
+        $this->vehicles = $vehicles;
     }
 
     public function getVehicles(): array
@@ -25,15 +27,24 @@ class Fleet
 
     public function addVehicle(Vehicle $vehicle): void
     {
-        foreach ($this->vehicles as $ownedVehicle) {
-            if ($vehicle->id === $ownedVehicle->id) {
-                throw new VehicleAlreadyOwnedException(
-                    fleetId: $this->id,
-                    vehicleId: $vehicle->id,
-                );
-            }
+        if ($this->hasVehicle($vehicle)) {
+            throw new VehicleAlreadyOwnedException(
+                fleetId: $this->id,
+                vehicleId: $vehicle->id,
+            );
         }
 
         $this->vehicles[] = $vehicle;
+    }
+
+    public function hasVehicle(Vehicle $vehicle): bool
+    {
+        foreach ($this->vehicles as $ownedVehicle) {
+            if ($vehicle->id->value === $ownedVehicle->id->value) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

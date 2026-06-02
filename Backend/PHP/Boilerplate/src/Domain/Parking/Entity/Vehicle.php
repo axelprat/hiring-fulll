@@ -9,17 +9,17 @@ use Fulll\Domain\Parking\ValueObject\VehiclePlateNumber;
 
 class Vehicle
 {
-    private ?Location $location = null;
-
     /**
      * I usually prefer numerical ID and uniq column for something else (like a plate number) but I'm open to discussion
      *
      * @param VehicleId $id
      * @param VehiclePlateNumber $plateNumber
+     * @param Location|null $location
      */
     public function __construct(
         public readonly VehicleId $id,
         public readonly VehiclePlateNumber $plateNumber,
+        private ?Location $location = null,
     ) {
     }
 
@@ -37,7 +37,11 @@ class Vehicle
      */
     public function setLocation(Location $location): void
     {
-        if ($this->location === $location) {
+        if (
+            $this->location !== null
+            && $this->location->longitude === $location->longitude
+            && $this->location->latitude === $location->latitude
+        ) {
             throw new VehicleAlreadyAtLocation(vehicleId: $this->id, location: $location);
         }
 

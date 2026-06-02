@@ -2,9 +2,9 @@
     "type": "project",
     "license": "proprietary",
     "require": {
-        "behat/behat": "*"
-    },
-    "require-dev": {
+        "behat/behat": "*",
+        "symfony/console": "^7.4",
+        "symfony/messenger": "^7.4"
     },
     "config": {
         "preferred-install": {

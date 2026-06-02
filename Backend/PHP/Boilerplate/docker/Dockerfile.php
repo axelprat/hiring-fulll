@@ -2,7 +2,7 @@ FROM php:8.2-fpm
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-RUN apt update && apt install -y curl unzip git libicu-dev libxml2-dev
+RUN apt update && apt install -y curl unzip libicu-dev libxml2-dev
 
 RUN docker-php-ext-install intl
 
@@ -12,6 +12,8 @@ RUN composer self-update
 
 COPY . /var/www/backend
 WORKDIR /var/www/backend
+
+RUN docker-php-ext-install pdo pdo_mysql
 
 RUN composer install --no-scripts
 

@@ -36,7 +36,7 @@ class User
      */
     public function addFleet(Fleet $fleet): void
     {
-        if ($fleet->owner->id !== $this->id) {
+        if ($fleet->owner->id->value !== $this->id->value) {
             throw new FleetHasOwnerException(
                 userId: $this->id,
                 fleetId: $fleet->id
@@ -44,7 +44,7 @@ class User
         }
 
         foreach ($this->fleets as $ownedFleet) {
-            if ($fleet->id === $ownedFleet->id) {
+            if ($fleet->id->value === $ownedFleet->id->value) {
                 throw new FleetAlreadyOwnedException(
                     userId: $this->id,
                     fleetId: $fleet->id
